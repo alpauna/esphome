@@ -1,0 +1,7 @@
+sensor:
+  - platform: hx710
+    name: HX710 Value
+    dout_pin: 14
+    clk_pin: 15
+    mode: 1
+    update_interval: 15s
