@@ -9,7 +9,11 @@
 namespace esphome {
 namespace hx710 {
 
-enum HX710Mode { HX710_DIFFERENTIAL_INPUT_10HZ = 1, HX710_OTHER_INPUT_40HZ = 2, HX710_DIFFERENTIAL_INPUT_40HZ = 3 };
+enum HX710Mode : uint8_t {
+  HX710_DIFFERENTIAL_INPUT_10HZ = 1,
+  HX710_OTHER_INPUT_40HZ = 2,
+  HX710_DIFFERENTIAL_INPUT_40HZ = 3
+};
 
 class HX710Sensor : public sensor::Sensor, public PollingComponent {
  public:
