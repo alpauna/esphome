@@ -220,7 +220,11 @@ RUN \
         nano=7.2-1+deb12u1 \
         build-essential=12.9 \
         python3-dev=3.11.2-1+b1 \
-    && rm -rf \
+    && if [ "$TARGETARCH$TARGETVARIANT" != "armv7" ]; then \
+    # move this up after armv7 is retired
+    apt-get install -y --no-install-recommends clang-tidy-18=1:18.1.8~++20240731024826+3b5b5c1ec4a3-1~exp1~20240731144843.145 ; \
+    fi; \
+    rm -rf \
         /tmp/* \
         /var/{cache,log}/* \
         /var/lib/apt/lists/*
@@ -228,9 +232,6 @@ RUN \
 COPY requirements_test.txt /
 RUN if [ "$TARGETARCH$TARGETVARIANT" = "armv7" ]; then \
         export PIP_EXTRA_INDEX_URL="https://www.piwheels.org/simple"; \
-  else \
-    # move this up into RUN above after armv7 is retired
-    apt-get install -y --no-install-recommends clang-tidy-18=1:18.1.8~++20240731024826+3b5b5c1ec4a3-1~exp1~20240731144843.145 ; \
   fi; \
   pip3 install \
   --break-system-packages --no-cache-dir -r /requirements_test.txt
