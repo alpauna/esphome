@@ -33,7 +33,12 @@ void HX710Sensor::update() {
   }
 }
 bool HX710Sensor::read_sensor_(uint32_t *result) {
-  if (this->dout_pin_->digital_read()) {
+  u_int8_t count = 0;
+  bool read;
+  while (!(read = this->dout_pin_->digital_read()) && count < 3) {
+    count++;
+  }
+  if (!read) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
     this->status_set_warning();
     return false;
@@ -77,6 +82,25 @@ bool HX710Sensor::read_sensor_(uint32_t *result) {
   if (result != nullptr)
     *result = data;
   return true;
+}
+
+float HX710Sensor::sample() {
+  uint32_t result = 0xFFFFFFFF;
+  if (read_sensor_(&result)) {
+    int32_t value = static_cast<int32_t>(result);
+    ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), value);
+    if (reference_voltage_ > 0.0f) {
+      if (value > 0) {
+        return value / 8388607.0f * reference_voltage_;
+      } else {
+        return value / 8388608.0f * reference_voltage_;
+      }
+    } else {
+      ESP_LOGD(TAG, "'%s': As RAW Value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
+      return static_cast<float>(result);
+    }
+  }
+  return static_cast<float>(result);
 }
 
 }  // namespace hx710
