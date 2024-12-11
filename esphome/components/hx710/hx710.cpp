@@ -33,12 +33,7 @@ void HX710Sensor::update() {
   }
 }
 bool HX710Sensor::read_sensor_(uint32_t *result) {
-  u_int8_t count = 0;
-  bool read;
-  while (!(read = this->dout_pin_->digital_read()) && count < 3) {
-    count++;
-  }
-  if (!read) {
+  if (!this->dout_pin_->digital_read()) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
     this->status_set_warning();
     return false;
