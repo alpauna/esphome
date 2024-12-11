@@ -5,6 +5,7 @@ import esphome.config_validation as cv
 from esphome.const import (
     CONF_CLK_PIN,
     CONF_MODE,
+    CONF_REFERENCE_VOLTAGE,
     DEVICE_CLASS_VOLTAGE,
     ICON_GAUGE,
     STATE_CLASS_MEASUREMENT,
@@ -22,7 +23,7 @@ HX710Sensor = hx710_ns.class_(
 )
 
 CONF_DOUT_PIN = "dout_pin"
-CONF_REF_VOLTAGE = "reference_voltage"
+
 
 HX710Mode = hx710_ns.enum("HX710Mode")
 MODES = {
@@ -44,7 +45,7 @@ CONFIG_SCHEMA = (
         {
             cv.Required(CONF_DOUT_PIN): pins.gpio_input_pin_schema,
             cv.Required(CONF_CLK_PIN): pins.gpio_output_pin_schema,
-            cv.Optional(CONF_REF_VOLTAGE, default="0.0V"): cv.voltage,
+            cv.Optional(CONF_REFERENCE_VOLTAGE, default="0.0V"): cv.voltage,
             cv.Optional(CONF_MODE, default=1): cv.enum(MODES, int=True),
         }
     )
@@ -59,6 +60,6 @@ async def to_code(config):
     dout_pin = await cg.gpio_pin_expression(config[CONF_DOUT_PIN])
     cg.add(var.set_dout_pin(dout_pin))
     sck_pin = await cg.gpio_pin_expression(config[CONF_CLK_PIN])
-    cg.add(var.set_reference_voltage(config[CONF_REF_VOLTAGE]))
+    cg.add(var.set_reference_voltage(config[CONF_REFERENCE_VOLTAGE]))
     cg.add(var.set_sck_pin(sck_pin))
     cg.add(var.set_gain(config[CONF_MODE]))
