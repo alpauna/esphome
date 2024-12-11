@@ -24,14 +24,9 @@ void HX710Sensor::dump_config() {
   LOG_UPDATE_INTERVAL(this);
 }
 float HX710Sensor::get_setup_priority() const { return setup_priority::DATA; }
-void HX710Sensor::update() {
-  uint32_t result;
-  if (this->read_sensor_(&result)) {
-    int32_t value = static_cast<int32_t>(result);
-    ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), value);
-    this->publish_state(value);
-  }
-}
+
+void HX710Sensor::update() { this->publish_state(this->sample()); }
+
 bool HX710Sensor::read_sensor_(uint32_t *result) {
   if (!this->dout_pin_->digital_read()) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
