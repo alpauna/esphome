@@ -28,7 +28,7 @@ float HX710Sensor::get_setup_priority() const { return setup_priority::DATA; }
 void HX710Sensor::update() { this->publish_state(this->sample()); }
 
 bool HX710Sensor::read_sensor_(uint32_t *result) {
-  if (!this->dout_pin_->digital_read()) {
+  if (this->dout_pin_->digital_read()) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
     this->status_set_warning();
     return false;
