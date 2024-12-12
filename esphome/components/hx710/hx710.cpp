@@ -29,7 +29,8 @@ void HX710Sensor::update() { this->publish_state(this->sample()); }
 
 bool HX710Sensor::read_sensor_(uint32_t *result) {
   if (this->dout_pin_->digital_read()) {
-    ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
+    ESP_LOGW(TAG, "HX710 is not ready for new measurements yet! Pin:%d", this->dout_pin_->get_pin());
+    this->dump_config();
     this->status_set_warning();
     return false;
   }
