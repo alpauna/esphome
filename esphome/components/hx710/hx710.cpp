@@ -88,7 +88,7 @@ float HX710Sensor::sample() {
       }
     } else {
       ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
-      return (float) result;
+      return static_cast<float>(value);
     }
   }
   return static_cast<float>(result);
