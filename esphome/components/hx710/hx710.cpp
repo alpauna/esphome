@@ -98,7 +98,7 @@ float HX710Sensor::sample() {
       }
     }
   }
-  return (float) result;
+  return NAN;
 }
 
 }  // namespace hx710
