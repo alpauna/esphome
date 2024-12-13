@@ -87,12 +87,13 @@ float HX710Sensor::sample() {
         return value / 8388608.0f * this->reference_voltage_;
       }
     } else {
-      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
       // Had problems with float returning large int rather than negative so I do below if for now. Crazy right???
       if (value > 0) {
+        ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
         return static_cast<float>(value);
       } else {
         double res = abs(value) * -1.0;
+        ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %.2f" PRId32, this->name_.c_str(), res);
         return static_cast<float>(res);
       }
     }
