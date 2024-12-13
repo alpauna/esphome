@@ -88,7 +88,12 @@ float HX710Sensor::sample() {
       }
     } else {
       ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
-      return static_cast<float>(value);
+      // Had problems with float returning large int rather than negative so I do below if for now. Crazy right???
+      if (value > 0) {
+        return static_cast<float>(value);
+      } else {
+        return static_cast<float>(abs(value)) * -1.0f;
+      }
     }
   }
   return static_cast<float>(result);
