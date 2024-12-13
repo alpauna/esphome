@@ -30,6 +30,7 @@ void HX710Sensor::update() { this->publish_state(this->sample()); }
 bool HX710Sensor::read_sensor_(uint32_t *result) {
   if (this->dout_pin_->digital_read()) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
+    this->dump_config();
     this->status_set_warning();
     return false;
   }
@@ -79,18 +80,25 @@ float HX710Sensor::sample() {
   if (read_sensor_(&result)) {
     int32_t value = static_cast<int32_t>(result);
     ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), value);
-    if (reference_voltage_ > 0.0f) {
+    if (this->reference_voltage_ > 0.0f) {
       if (value > 0) {
-        return value / 8388607.0f * reference_voltage_;
+        return value / 8388607.0f * this->reference_voltage_;
       } else {
-        return value / 8388608.0f * reference_voltage_;
+        return value / 8388608.0f * this->reference_voltage_;
       }
     } else {
-      ESP_LOGD(TAG, "'%s': As RAW Value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
-      return static_cast<float>(result);
+      // Had problems with float returning large int rather than negative so I do below if for now. Crazy right???
+      if (value > 0) {
+        ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);
+        return static_cast<float>(value);
+      } else {
+        double res = abs(value) * -1.0;
+        ESP_LOGD(TAG, "'%s': As RAW Value Because 0.0 ref voltage %.2f" PRId32, this->name_.c_str(), res);
+        return static_cast<float>(res);
+      }
     }
   }
-  return static_cast<float>(result);
+  return (float) result;
 }
 
 }  // namespace hx710
