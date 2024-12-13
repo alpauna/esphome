@@ -92,7 +92,8 @@ float HX710Sensor::sample() {
       if (value > 0) {
         return static_cast<float>(value);
       } else {
-        return abs(value) * -1.0f;
+        double res = abs(value) * -1.0;
+        return static_cast<float>(res);
       }
     }
   }
