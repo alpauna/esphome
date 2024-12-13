@@ -80,11 +80,11 @@ float HX710Sensor::sample() {
   if (read_sensor_(&result)) {
     int32_t value = static_cast<int32_t>(result);
     ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), value);
-    if (reference_voltage_ > 0.0f) {
+    if (this->reference_voltage_ > 0.0f) {
       if (value > 0) {
-        return value / 8388607.0f * reference_voltage_;
+        return value / 8388607.0f * this->reference_voltage_;
       } else {
-        return value / 8388608.0f * reference_voltage_;
+        return value / 8388608.0f * this->reference_voltage_;
       }
     } else {
       ESP_LOGD(TAG, "'%s': As RAW Value because 0.0 ref voltage %" PRId32, this->name_.c_str(), value);

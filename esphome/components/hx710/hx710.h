@@ -18,10 +18,10 @@ enum HX710Mode : uint8_t {
 
 class HX710Sensor : public sensor::Sensor, public PollingComponent, public voltage_sampler::VoltageSampler {
  public:
-  void set_dout_pin(GPIOPin *dout_pin) { dout_pin_ = dout_pin; }
-  void set_sck_pin(GPIOPin *sck_pin) { sck_pin_ = sck_pin; }
-  void set_gain(HX710Mode gain) { gain_ = gain; }
-  void set_reference_voltage(float reference_voltage) { reference_voltage_ = reference_voltage; }
+  void set_dout_pin(GPIOPin *dout_pin) { this->dout_pin_ = dout_pin; }
+  void set_sck_pin(GPIOPin *sck_pin) { this->sck_pin_ = sck_pin; }
+  void set_gain(HX710Mode gain) { this->gain_ = gain; }
+  void set_reference_voltage(float reference_voltage) { this->reference_voltage_ = reference_voltage; }
 
   void setup() override;
   void dump_config() override;
