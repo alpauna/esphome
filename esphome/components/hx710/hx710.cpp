@@ -21,6 +21,7 @@ void HX710Sensor::dump_config() {
   LOG_SENSOR("", "HX710", this);
   LOG_PIN("  DOUT Pin: ", this->dout_pin_);
   LOG_PIN("  SCK Pin: ", this->sck_pin_);
+  ESP_LOGCONFIG(TAG, " reference_voltage: %V", this->reference_voltage_);
   LOG_UPDATE_INTERVAL(this);
 }
 float HX710Sensor::get_setup_priority() const { return setup_priority::DATA; }
