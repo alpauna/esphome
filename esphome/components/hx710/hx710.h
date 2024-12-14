@@ -30,7 +30,7 @@ class HX710Sensor : public sensor::Sensor, public PollingComponent, public volta
   float sample() override;
 
  protected:
-  bool read_sensor_(float *result);
+  bool read_sensor_(int32_t *result);
   float reference_voltage_{0.0f};
   GPIOPin *dout_pin_;
   GPIOPin *sck_pin_;

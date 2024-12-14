@@ -28,7 +28,7 @@ float HX710Sensor::get_setup_priority() const { return setup_priority::DATA; }
 
 void HX710Sensor::update() { this->publish_state(this->sample()); }
 
-bool HX710Sensor::read_sensor_(float *result) {
+bool HX710Sensor::read_sensor_(int32_t *result) {
   if (this->dout_pin_->digital_read()) {
     ESP_LOGW(TAG, "HX710 is not ready for new measurements yet!");
     this->dump_config();
@@ -72,29 +72,27 @@ bool HX710Sensor::read_sensor_(float *result) {
   }
 
   if (result != nullptr)
-    *result = static_cast<float>(data);
+    *result = static_cast<int32_t>(data);
   return true;
 }
 
 float HX710Sensor::sample() {
   float result = NAN;
-  if (read_sensor_(&result)) {
-    ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), result);
+  int32_t res = 0;
+  if (read_sensor_(&res)) {
+    ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), res);
     if (this->reference_voltage_ > 0.0f) {
-      if (result > 0) {
-        return result / 8388607.0f * this->reference_voltage_;
+      if (res > 0) {
+        return res / 8388607.0f * this->reference_voltage_;
       } else {
-        return result / 8388608.0f * this->reference_voltage_;
+        return res / 8388608.0f * this->reference_voltage_;
       }
     } else {
-      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), result);
-      if (result == NAN) {
-        int32 res = static_cast<int32>(result);
-        if (res < 0) {
-          return static_cast<int32>(abs(res));
-        }
+      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), res);
+      if (res < 0) {
+        return static_cast<float>(-abs(res));
       }
-      return result;
+      return static_cast<float>(res);
     }
   }
   return result;
