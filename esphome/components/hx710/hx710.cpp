@@ -80,20 +80,21 @@ float HX710Sensor::sample() {
   float result = NAN;
   int32_t res = 0;
   if (read_sensor_(&res)) {
-    std::string resstr = to_string(res);
-    ESP_LOGD(TAG, "'%s': Got value %s" PRId32, this->name_.c_str(), resstr);
+    ESP_LOGD(TAG, "'%s': Got value %" PRId32, this->name_.c_str(), result);
     if (this->reference_voltage_ > 0.0f) {
-      if (res > 0) {
-        return res / 8388607.0f * this->reference_voltage_;
+      if (result > 0) {
+        return result / 8388607.0f * this->reference_voltage_;
       } else {
-        return res / 8388608.0f * this->reference_voltage_;
+        return result / 8388608.0f * this->reference_voltage_;
       }
     } else {
-      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %s" PRId32, this->name_.c_str(), resstr);
-      if (res < 0) {
-        auto val = parse_number<float>(resstr);
-        return val.value_or(NAN);
+      // Had problems with float returning large int rather than negative so I do below if for now. Crazy right???
+      if (result > 0) {
+        ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %" PRId32, this->name_.c_str(), result);
+        return static_cast<float>(result);
       } else {
+        double res = abs(result) * -1.0;
+        ESP_LOGD(TAG, "'%s': As RAW Value Because 0.0 ref voltage %.2f" PRId32, this->name_.c_str(), res);
         return static_cast<float>(res);
       }
     }
