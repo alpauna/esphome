@@ -89,8 +89,7 @@ float HX710Sensor::sample() {
         return res / 8388608.0f * this->reference_voltage_;
       }
     } else {
-      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %.2f" PRId32, this->name_.c_str(),
-               parse_number<float>(resstr));
+      ESP_LOGD(TAG, "'%s': As RAW value because 0.0 ref voltage %s" PRId32, this->name_.c_str(), resstr);
       if (res < 0) {
         auto val = parse_number<float>(resstr);
         return val.value_or(NAN);
